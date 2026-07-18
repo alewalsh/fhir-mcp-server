@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="fhir-mcp-server.csproj" />
+  <Project Path="fhir-mcp-server.Tests/fhir-mcp-server.Tests.csproj" />
+</Solution>

@@ -1,0 +1,12 @@
+.codegraph
+.mex
+.cursorrules
+.plan
+/.plan
+/data/sample-synthea-data/
+bin/
+obj/
+.vs/
+*.user
+fhir-mcp-server.Tests/bin/
+fhir-mcp-server.Tests/obj/

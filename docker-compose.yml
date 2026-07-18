@@ -1,0 +1,9 @@
+services:
+  hapi:
+    image: hapiproject/hapi:latest
+    ports:
+      - "8080:8080"
+    environment:
+      # Large Synthea transaction bundles need real heap; 2g still OOMs around ~50.
+      JAVA_OPTS: "-Xmx4g -Xms1g"
+    mem_limit: 5g
