@@ -17,7 +17,7 @@ public static class MedicationSummaryMapper
 
     /// <summary>
     /// Collapse renewals into one summary line per drug display name.
-    /// Business rule (see .mex/context/decisions.md): not a raw FHIR field —
+    /// Business rule: not a raw FHIR field —
     /// status = active if any active MedicationRequest exists for that name,
     /// else the newest authoredOn overall.
     /// </summary>

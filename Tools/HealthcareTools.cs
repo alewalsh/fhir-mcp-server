@@ -6,7 +6,7 @@ namespace fhir_mcp_server.Tools;
 
 /// <summary>
 /// MCP tool surface — thin orchestration over <see cref="IClinicalQueryService"/>.
-/// Descriptions are the model-facing contract (see .mex/context/mcp-tools.md).
+/// Descriptions are the model-facing contract.
 /// </summary>
 [McpServerToolType]
 public sealed class HealthcareTools(IClinicalQueryService clinical)
