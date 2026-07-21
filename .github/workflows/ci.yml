@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      # Prefer the test csproj over fhir-mcp-server.slnx (.slnx is newer / less
+      # portable on Actions than a direct project path).
+      - name: Restore
+        run: dotnet restore fhir-mcp-server.Tests/fhir-mcp-server.Tests.csproj
+
+      - name: Build
+        run: dotnet build fhir-mcp-server.Tests/fhir-mcp-server.Tests.csproj --no-restore -c Release
+
+      - name: Test
+        run: dotnet test fhir-mcp-server.Tests/fhir-mcp-server.Tests.csproj --no-build -c Release --verbosity normal

@@ -75,7 +75,7 @@ public class ClinicalQueryServiceTests
     [Fact]
     public async Task SearchPatients_NoMatch_TeachesNameOnlyLimitAtFailureTime()
     {
-        // Runtime defense (Checkpoint E): a model that probes a clinical term as a name must
+        // Runtime defense: a model that probes a clinical term as a name must
         // learn from the result — deterministic text, unlike description-only steering.
         var svc = new ClinicalQueryService(new FakeRepo(), NullLogger<ClinicalQueryService>.Instance);
         var text = await svc.SearchPatientsAsync("diabetes");

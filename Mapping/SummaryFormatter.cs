@@ -79,7 +79,6 @@ public static class SummaryFormatter
     public static string FormatPatientSearch(string name, IReadOnlyList<PatientSummary> patients, int cap)
     {
         // Runtime defense: the model learns limits better from results than from tool descriptions
-        // (Checkpoint E: description wording alone did not stop condition-as-name probes).
         if (patients.Count == 0)
             return $"No patients found with a name matching \"{name}\". This parameter matches patient names only. "
                  + "This server cannot find patients by condition, diagnosis, or any clinical criteria — there is no such capability. "

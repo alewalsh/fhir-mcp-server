@@ -1,9 +1,13 @@
+# Local Synthea / FHIR patient payloads — never commit (even synthetic)
+/data/sample-synthea-data/
+/data/**/*.json
+/data/**/*.ndjson
+/data/**/*.xml
 .codegraph
 .mex
-.cursorrules
 .plan
 /.plan
-/data/sample-synthea-data/
+.cursor/
 bin/
 obj/
 .vs/

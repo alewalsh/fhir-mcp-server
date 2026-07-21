@@ -115,15 +115,22 @@ if (-not (Wait-HapiReady -Reason "startup check")) {
 
 $hospital = @(Get-ChildItem -Path $DataDir -Filter "hospitalInformation*.json" -File)
 $practitioner = @(Get-ChildItem -Path $DataDir -Filter "practitionerInformation*.json" -File)
+$hasOrgBundles = ($hospital.Count -gt 0) -and ($practitioner.Count -gt 0)
+$loadOrgBundles = $hasOrgBundles -and -not $SkipOrgBundles
 
-if ($hospital.Count -eq 0) { throw "No hospitalInformation*.json found in $DataDir" }
-if ($practitioner.Count -eq 0) { throw "No practitionerInformation*.json found in $DataDir" }
+# Official Synthea sample ZIP has patient bundles only (no hospital/practitioner files).
+if (-not $hasOrgBundles -and -not $SkipOrgBundles) {
+    Write-Host "No hospitalInformation*/practitionerInformation* in $DataDir - skipping org load (typical for official sample ZIP)." -ForegroundColor DarkYellow
+}
 
 # ponytail: wrap in @() - Get-ChildItem returns a scalar FileInfo for a single match
 $skipPaths = @($hospital | ForEach-Object { $_.FullName }) + @($practitioner | ForEach-Object { $_.FullName })
 $allPatients = @(Get-ChildItem -Path $DataDir -Filter "*.json" -File |
     Where-Object { $skipPaths -notcontains $_.FullName } |
     Sort-Object Name)
+if ($allPatients.Count -eq 0) {
+    throw "No patient *.json bundles found in $DataDir (see data/README.md - extract fhir/*.json from the sample ZIP)"
+}
 
 if ($Skip -ge $allPatients.Count) {
     throw "Skip=$Skip is past the end of $($allPatients.Count) patient files"
@@ -143,7 +150,7 @@ Write-Host "Data: $DataDir"
 Write-Host "Patients: loading $($patients.Count) of $($allPatients.Count) (Skip=$Skip Limit=$limitLabel BatchSize=$BatchSize Pause=${BatchPauseSeconds}s)"
 Write-Host ""
 
-if (-not $SkipOrgBundles) {
+if ($loadOrgBundles) {
     Write-Host "=== 1/3 Hospital ==="
     Post-Bundle $hospital[0].FullName
 
@@ -152,7 +159,7 @@ if (-not $SkipOrgBundles) {
     Post-Bundle $practitioner[0].FullName
 }
 else {
-    Write-Host "=== 1-2/3 Hospital + Practitioner === skipped (-SkipOrgBundles)"
+    Write-Host "=== 1-2/3 Hospital + Practitioner === skipped"
 }
 
 Write-Host ""

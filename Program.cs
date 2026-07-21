@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 // Dual-mode entry:
 //   default     → MCP stdio host (Claude Desktop / MCP Inspector)
-//   --smoke …   → Checkpoint C HAPI smoke (stdout OK; no MCP protocol)
+//   --smoke …   → a simple smoke test to check the HAPI smoke (stdout OK; no MCP protocol)
 
 var smoke = args.Contains("--smoke", StringComparer.OrdinalIgnoreCase);
 var nameHint = args.SkipWhile(a => !string.Equals(a, "--smoke", StringComparison.OrdinalIgnoreCase))

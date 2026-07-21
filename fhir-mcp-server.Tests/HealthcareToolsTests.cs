@@ -9,7 +9,7 @@ namespace fhir_mcp_server.Tests;
 
 public class HealthcareToolsTests
 {
-    // CI guards contract text only — Claude obedience is Checkpoint E/F (negative diabetes prompt).
+    // CI guards contract text only.
     // The heavy lifting lives in the runtime no-results message (see ClinicalQueryServiceTests),
     // which the model reads at failure time; the description stays short.
     [Fact]
@@ -39,6 +39,29 @@ public class HealthcareToolsTests
     {
         var desc = MethodDescription(methodName);
         Assert.Contains("not for clinical use", desc, StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [MemberData(nameof(McpToolMethodNames))]
+    public void EveryMcpTool_IsReadOnlyAndNonDestructive(string methodName)
+    {
+        var method = typeof(HealthcareTools).GetMethod(methodName)
+            ?? throw new InvalidOperationException($"Method {methodName} not found.");
+        var attr = method.GetCustomAttribute<McpServerToolAttribute>()
+            ?? throw new InvalidOperationException($"{methodName} missing [McpServerTool].");
+        Assert.True(attr.ReadOnly, $"{methodName} must be ReadOnly=true.");
+        // SDK default Destructive=true; leave it unset and Inspector shows ✓ Destructive next to ✓ Read-only.
+        Assert.False(attr.Destructive, $"{methodName} must be Destructive=false.");
+    }
+
+    [Fact]
+    public void OnlyHealthcareTools_IsMcpServerToolType()
+    {
+        var toolTypes = typeof(HealthcareTools).Assembly.GetTypes()
+            .Where(t => t.GetCustomAttribute<McpServerToolTypeAttribute>() is not null)
+            .ToList();
+        Assert.Single(toolTypes);
+        Assert.Equal(typeof(HealthcareTools), toolTypes[0]);
     }
 
     private static string MethodDescription(string methodName)
