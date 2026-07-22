@@ -6,4 +6,30 @@ services:
     environment:
       # Large Synthea transaction bundles need real heap; 2g still OOMs around ~50.
       JAVA_OPTS: "-Xmx4g -Xms1g"
+      spring.datasource.url: jdbc:postgresql://postgres:5432/hapi
+      spring.datasource.username: admin
+      spring.datasource.password: admin
+      spring.datasource.driverClassName: org.postgresql.Driver
+      spring.jpa.properties.hibernate.dialect: ca.uhn.fhir.jpa.model.dialect.HapiFhirPostgresDialect
     mem_limit: 5g
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: hapi
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - hapi-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d hapi"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  hapi-postgres-data:
