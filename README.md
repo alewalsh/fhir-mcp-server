@@ -107,7 +107,7 @@ Then call `search_patients` with a partial name (e.g. `Harris`), take a returned
 
 > Find patient Harris, summarize them, then list active conditions and current medications.
 
-A strong demo run chains those tools without being told the steps. Grounding scorecard: [`evals/grounding-results.md`](evals/grounding-results.md).
+A strong demo run chains those tools without being told the steps. Grounding scorecard: [`evals/grounding-results.md`](evals/grounding-results.md). Also exercised with **Cursor** (Composer) and a local **Qwen2.5 7B** client via LM Studio — stdio MCP is client-agnostic, not Claude Desktop–specific.
 
 ## Safety
 

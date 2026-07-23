@@ -67,6 +67,19 @@ Expected claims are frozen from **tool/smoke output** (oracle = what the MCP too
 2. **#9 / tool-trace oracle:** Grounding is evaluated against the tool trace, not against the prose transcript. An initial review of #9 flagged a false positive because the transcript alone didn't show the `get_observations` call from #5 — the stderr log / full session order resolved it. Lesson: the trace is the oracle.
 3. **#1 / #3:** Partial-name search + clean refuse on diagnosis search are the operational takeaways.
 
+## Cross-client testing (2026-07-22)
+
+| Field | Value |
+|-------|--------|
+| Client | Cursor (Composer 2.5 Fast) |
+| Prompt | Use the fhir-mcp-server MCP to look up patient Harris, get his summary, and confirm the deduplicated medication matches what we saw in the smoke test |
+| Behaviour | Read `ROUTER.md`, grepped the codebase, and read this file **before** calling tools — self-checked against project docs, not runtime tools alone |
+| Obtained | `search_patients` (Harris → 3506) → `get_patient_summary` → `get_medications`; all correct |
+| Grounding | **PASS** — Simvastatin 20 MG active, Amlodipine 5 MG active, no renewal flood; matches 2026-07-18 smoke |
+| Note | First case of an MCP client using the repo’s own code/docs as part of verification, not tools at runtime only |
+
+**Qwen2.5 7B Instruct (LM Studio, Vulkan, RX 6650 XT local):** First attempt — routing fail: passed `Harris` as `patient_id` instead of searching by name; server returned `Patient Harris not found.` (no fabrication). With an explicit prompt (search first, then use the returned id): chained `search_patients` → `get_conditions`. Hard no-fabrication rules hold even when the client model misroutes; tool-calling skill varies by model, data integrity does not.
+
 ## Message-class coverage (tools)
 
 | # | Class exercised |
